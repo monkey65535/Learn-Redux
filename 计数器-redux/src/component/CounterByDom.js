@@ -54,6 +54,7 @@ $addCounter.click(ev =>{
     counters.push(counter);
     $counterPanel.append(counter.elt);
 });
+$
 
 function checkHasAll(counters){
     let val = counters.every(e => e.value !== 0);
