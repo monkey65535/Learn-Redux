@@ -99,5 +99,8 @@ store.subscribe(() => {
     $counterPanel.html("");
     state.forEach(data => {
         $counterPanel.append(new Counter(store,data).elt);
-    })
+    });
+    $hasAll.html(state.every(e => e.value !== 0) + '');
+    $maximum.html([...state].sort((a,b) => b.value-a.value)[0].value);
+    $allCount.html(state.reduce((accu, e) => accu+e.value,0));
 })
