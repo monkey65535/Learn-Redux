@@ -1,5 +1,5 @@
-import {createStore} from 'redux';
-
+import {createStore,applyMiddleware} from 'redux';
+import thunk from 'redux-thunk';
 // 获取元素
 let $addCounter = $('.counterBox .addCounter'),
     $counterPanel = $('.counterBox .counterPanel'),
@@ -37,8 +37,39 @@ function counter(state = [], action) {
     }
 }
 
+// 定义action
+function increment(id){
+    return {type:'INCREMENT',id};
+}
+function decrement(id){
+    return {type:'DECREMENT',id};
+}
+
+// 定义thunk的函数
+const addIfOff = (id,value) => (dispatch,getState) => {
+    if(value % 2 === 0) return;
+    dispatch(increment(id));
+}
+const addAsync = (id) => (dispatch,getState) =>{
+    setTimeout(()=>{
+        boundIncrement(id);
+    },1000);
+}
+
 // 创建store
-let store = createStore(counter);
+let store = createStore(counter,[],applyMiddleware(thunk));
+
+
+// 创建dispatch
+const boundIncrement = (id) => store.dispatch(increment(id));
+const boundDecrement = (id) => store.dispatch(decrement(id));
+const boundAddIfOdd = (id) => store.dispatch(addIfOff(id));
+const boundAddAsync = (id) => store.dispatch(addAsync(id));
+
+
+
+
+
 
 class Counter {
     constructor(store, data) {
@@ -75,15 +106,10 @@ class Counter {
         this.store.dispatch({type: 'INCREMENT',id});
     }
     addIfOdd() {
-        if (this.value % 2 === 0) return;
-        const {id} = this;
-        this.store.dispatch({type: 'INCREMENT',id});
+        boundAddIfOdd(this.id,this.value);
     }
     addAsync() {
-        const {id} = this;
-        setTimeout(() => {
-             this.store.dispatch({type: 'INCREMENT',id});
-        }, 1000)
+        boundAddAsync(this.id);
     }
 }
 
